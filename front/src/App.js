@@ -24,7 +24,7 @@ export default function App() {
   },[])
 
   const {isLoaded} = useLoadScript({
-    googleMapsApiKey:"AIzaSyCUXmujAK7hbbsFaH8E0ylu4z5-YHv2BN8"
+    googleMapsApiKey:"cle api maps"
   }) 
 
   if(!isLoaded){
