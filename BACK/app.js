@@ -4,7 +4,9 @@ const axios = require("axios");
 const geo =  require("geolib");
 const body = require("body-parser")
 
-app.listen(3030);
+app.listen(3030, ()=>{
+    console.log("server Back is on port 3030")
+});
 
 const axiosOptions = {
     headers:{
