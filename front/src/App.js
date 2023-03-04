@@ -22,10 +22,27 @@ const center = {
   lng: 2.333333,
 };
 
+const image = {
+  url: "./pin_station.png",
+  scaledSize: {
+    width: 15,
+    height: 15
+  }
+};
+
+const emptyImage = {
+  url: "./pin_station_vide.png",
+  scaledSize: {
+    width: 15,
+    height: 15
+  }
+};
+
 export default function App() {
   const [data, setData] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [markersVisible, setMarkersVisible] = useState(false);
+  const [emptyMarkersVisible, setEmptyMarkersVisible] = useState(false);
   const [autocomplete, setAutocomplete] = useState(null);
 
   useEffect(() => {
@@ -38,6 +55,10 @@ export default function App() {
 
   const toggleMarkers = () => {
     setMarkersVisible((prevVisible) => !prevVisible);
+  };
+
+  const toggleEmptyMarkers = () => {
+    setEmptyMarkersVisible((prevVisible) => !prevVisible);
   };
 
   const handlePlaceSelect = async () => {
@@ -58,33 +79,51 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "GoogleMapsApi",
+    googleMapsApiKey: "clé API GoogleMaps",
     libraries: ["places"],
   });
 
   if (!isLoaded) return "loading maps";
   if (loadError) return "Error loading maps";
-
   
   return (
-    <div style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}>
+    <div
+      style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
+    >
       <GoogleMap
         zoom={14}
         center={center}
         mapContainerStyle={Taille}
-          options={{
-            disableDefaultUI: true,
+        options={{
+          disableDefaultUI: true,
+        }}
+      >
+        <div
+          style={{
+            position: "absolute",
+            marginTop: 20,
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
           }}
-       >
-          <div style={{ position: "absolute", marginTop: 20, display: "flex", justifyContent: "center", width: "100%" }}>
-          <Autocomplete onLoad={(autocomplete) => setAutocomplete(autocomplete)} onPlaceChanged={handlePlaceSelect}>
-            <input type="text" placeholder="Recherche" />
+        >
+          <Autocomplete
+            onLoad={(autocomplete) => setAutocomplete(autocomplete)}
+            onPlaceChanged={handlePlaceSelect}
+          >
+            <input type="text" placeholder="Rechercher une adresse" />
           </Autocomplete>
-          </div>
-
+        </div>
+  
         <div style={{ position: "absolute", top: 10, left: 10 }}>
           <button style={controlStyle} onClick={toggleMarkers}>
-            {markersVisible ? "Cacher Les Stations" : "Montrer Les Stations"}
+            {markersVisible ? "Cacher Les Stations" 
+            : "Montrer Les Stations"}
+          </button>
+          <button style={controlStyle} onClick={toggleEmptyMarkers}>
+            {emptyMarkersVisible
+              ? "Cacher Les Stations Vides"
+              : "Montrer Les Stations Vides"}
           </button>
         </div>
         {data.map((element) => {
@@ -92,27 +131,43 @@ export default function App() {
             lat: element.latitude,
             lng: element.longitude,
           };
+
+          let icon = image;
+          if (element.veloDisponible === 0) {
+            icon = emptyImage;
+          }
+
           return (
             <Marker
               key={element.stationId}
               position={pos}
               onClick={() => setSelectedMarker(element)}
-              visible={markersVisible}
+              visible={markersVisible && (element.veloDisponible > 0 || emptyMarkersVisible)}
+              icon={icon}
             />
           );
         })}
         {selectedMarker && (
           <InfoWindow
-            position={{ lat: selectedMarker.latitude, lng: selectedMarker.longitude }}
+            position={{
+              lat: selectedMarker.latitude,
+              lng: selectedMarker.longitude,
+            }}
           >
             <p>
               {"Nom : " + selectedMarker.nom}
               <br />
-              {"Velo disponible : " + selectedMarker.veloDisponible}
+              {"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}
+              <br/>
+              {"vélo(s) mécanique(s) : " + selectedMarker.velo_Mecanique}
+              <br/>
+              {"vélo(s) éléctrique(s) : " + selectedMarker.velo_electrique}
+              <br/>
+              {"Identifiant de la station :" + selectedMarker.stationId}
             </p>
           </InfoWindow>
         )}
       </GoogleMap>
     </div>
   );
-}
+  }
