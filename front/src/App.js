@@ -79,7 +79,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "clé API GoogleMaps",
+    googleMapsApiKey: "AIzaSyDRZKNn_5s5gMEhmkz_BwfaRux00zR9PxM",
     libraries: ["places"],
   });
 
