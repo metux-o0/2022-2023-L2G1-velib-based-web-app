@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const axios = require("axios");
 const geo =  require("geolib");
-const body = require("body-parser")
+const body = require("body-parser");
 
 app.listen(3030, ()=>{
     console.log("server Back is on port 3030")
