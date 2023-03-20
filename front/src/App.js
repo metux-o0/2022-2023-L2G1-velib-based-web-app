@@ -51,35 +51,24 @@ const myLocationImage = {
   }};
 
   const NearsBikes = {
-    url: "./stations_proches.svg",
+    url: "./pin_station_proche.svg",
     scaledSize: {
       width: 50,
       height: 50
     },
   };
-  
-
-
-
-
-
-
-
-
-
 
 export default function App() {
-
-
-  // states , états - données ---------------------------------------------------------------------------------------
   const [data, setData] = useState([]);
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [markersVisible, setMarkersVisible] = useState(false);
   const [emptyMarkersVisible, setEmptyMarkersVisible] = useState(false);
   const [autocomplete, setAutocomplete] = useState(null);
-  const [nearStations,setNearStations] = useState([]);
-  const [directionsButton] = useState(true);
+  const [nearStations, setNearStations] = useState([]);
   const [directions, setDirections] = useState(null);
+  const [nearStationsVisible, setNearStationsVisible] = useState(false);
+
+  //console.log(nearStations);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -90,15 +79,15 @@ export default function App() {
   }, []);
 
   useEffect (() => {
-
-    
     const fetchData = async () =>{
-      const result = await axios.get(`http://localhost:3030/proches/${myLocation.lat}/${myLocation.lng}`);
+      const result = await axios.get("http://localhost:3030/proches/48.8867937/2.3544721");
       setNearStations(result.data)
     }
 
     fetchData();
   }, []);
+
+  console.log(nearStations);
 
   const toggleMarkers = () => {
     setMarkersVisible((prevVisible) => !prevVisible);
@@ -108,6 +97,10 @@ export default function App() {
     setEmptyMarkersVisible((prevVisible) => !prevVisible);
   };
 
+  const toggleNearStations = () => {
+    setNearStationsVisible((prevVisible) => !prevVisible);
+  };
+  
   const handlePlaceSelect = async () => {
     const place = autocomplete.getPlace();
     if (place.geometry) {
@@ -119,37 +112,37 @@ export default function App() {
           latitude: center.lat,
           longitude: center.lng,
         });
+
+        const result = await axios.get(`http://localhost:3030/proches/${center.lat}/${center.lng}`);
+        setNearStations(result.data);
       } catch (error) {
         console.log(error);
       }
     }
   };
 
+  const calculateDirections = async (destination) => {
+    console.log("Station la plus proche sélectionnée :", destination);
 
+    const DirectionsService = new window.google.maps.DirectionsService();
 
-
-  const calculateDirections = async () => {
-  
-    const service = new window.google.maps.DirectionsService();
-  
     const origin = new window.google.maps.LatLng(
       myLocation.lat,
       myLocation.lng
     );
-  
-    const destination = new window.google.maps.LatLng(
-      nearStations[0].latitude,
-      nearStations[0].longitude
+
+    const destinationLatLng = new window.google.maps.LatLng(
+      destination.latitude,
+      destination.longitude
     );
-  
-    service.route(
+
+    DirectionsService.route(
       {
         origin: origin,
-        destination: destination,
-        travelMode: window.google.maps.TravelMode.BICYCLING,
+        destination: destinationLatLng,
+        travelMode: window.google.maps.TravelMode.WALKING,
       },
       (result, status) => {
-  
         if (status === window.google.maps.DirectionsStatus.OK) {
           setDirections(result);
         } else {
@@ -158,24 +151,15 @@ export default function App() {
       }
     );
   };
-
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "clè API Goooooooooooooooooooooooogle",
+    googleMapsApiKey: "AIzaSyCbOZqlSkhbTPXSXLs4x0P0lp-uQrJr1Vg",
     libraries: ["places"],
   });
 
   if (!isLoaded) return "loading maps";
   if (loadError) return "Error loading maps";
-  
 
-
-
-
-
-
-
-
-  return (  // rendering -------------------------------------------------------------------------------------
+  return (
     <div
       style={{ position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }}
     >
@@ -207,89 +191,104 @@ export default function App() {
               lat: elementNearStation.latitude,
               lng: elementNearStation.longitude,
             };
-  
+
             let myIcon = NearsBikes;
-  
+
             return <MarkerF position={pos} icon={myIcon} />;
           })}
         </div>
-  
-        <div style={{ position: "absolute", top: 10, left: 1 }}>
-          <button style={controlStyle} onClick={toggleMarkers}>
-            {markersVisible ? "Cacher Les Stations" : "Montrer Les Stations"}
-          </button>
-          <br></br>
-          <button style={controlStyle} onClick={toggleEmptyMarkers}>
-            {emptyMarkersVisible
-              ? "Cacher Les Stations Vides"
-              : "Montrer Les Stations Vides"}
-          </button>
-          {nearStations.length > 0 && (
-          <><br></br><button
-              style={controlStyle}
-              onClick={calculateDirections}
-              visible={directionsButton}>
-              {"Station la plus proche"}
-            </button></>
-  )}
-        </div>
+
+        <div style={{ position: "absolute", top: 10, left: 10 }}>
+        <button style={controlStyle} onClick={toggleMarkers}>
+          {markersVisible ? "Cacher Les Stations" : "Montrer Les Stations"}
+        </button>
+        <button style={controlStyle} onClick={toggleEmptyMarkers}>
+          {emptyMarkersVisible
+            ? "Cacher Les Stations Vides"
+            : "Montrer Les Stations Vides"}
+        </button>
+      </div>
+      {nearStations.length > 0 && (
+        <div style={{ position: "absolute", top: 10, left: 800 }}>
+        <button style={controlStyle} onClick={toggleNearStations}>
+        {nearStationsVisible ? "Cacher les stations proches" : "Stations les plus proches"}
+        </button>
+        {nearStationsVisible && (
+          <ul>
+            {nearStations.map((station, index) => (
+              <li
+                key={index}
+                style={{ cursor: "pointer" }}
+                onClick={() => calculateDirections(station)}
+              >
+                {station.nom} : {station.veloDisponible} vélo(s) disponible(s)
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    )}
+
+
+
+
         {data.map((element) => {
           let pos = {
             lat: element.latitude,
             lng: element.longitude,
           };
-  
+
           let icon = image;
           if (element.veloDisponible === 0) {
             icon = emptyImage;
           }
-  
+
           return (
             <Marker
-              key={element.stationId}
-              position={pos}
-              onClick={() => {
-                setSelectedMarker(element);
-                
-              }}
-              visible={
-                markersVisible &&
-                (element.veloDisponible > 0 || emptyMarkersVisible)
-              }
-              icon={icon}
-            />
-          );
-        })}
-  
-        {myLocation && (
-          <MarkerF
-            position={{ lat: myLocation.lat, lng: myLocation.lng }}
-            icon={myLocationImage}
-          />
-        )}
-  
-        {selectedMarker && (
-          <InfoWindow
-            position={{
-              lat: selectedMarker.latitude,
-              lng: selectedMarker.longitude,
+            key={element.stationId}
+            position={pos}
+            onClick={() => {
+              setSelectedMarker(element);
             }}
-          >
-            <p>
-              {"Nom : " + selectedMarker.nom}
-              <br />
-              {"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}
-              <br />
-              {"vélo(s) mécanique(s) : " + selectedMarker.velo_Mecanique}
-              <br />
-              {"vélo(s) éléctrique(s) : " + selectedMarker.velo_electrique}
-              <br />
-              {"Identifiant de la station :" + selectedMarker.stationId}
-            </p>
-          </InfoWindow>
-        )}
-  
-        {directions && <DirectionsRenderer directions={directions} />}
-      </GoogleMap>
-    </div>
-  )};
+            visible={
+              markersVisible &&
+              (element.veloDisponible > 0 || emptyMarkersVisible)
+            }
+            icon={icon}
+          />
+        );
+      })}
+
+      {myLocation && (
+        <MarkerF
+          position={{ lat: myLocation.lat, lng: myLocation.lng }}
+          icon={myLocationImage}
+        />
+      )}
+
+      {selectedMarker && (
+        <InfoWindow
+          position={{
+            lat: selectedMarker.latitude,
+            lng: selectedMarker.longitude,
+          }}
+        >
+          <p>
+            {"Nom : " + selectedMarker.nom}
+            <br />
+            {"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}
+            <br />
+            {"vélo(s) mécanique(s) : " + selectedMarker.velo_Mecanique}
+            <br />
+            {"vélo(s) éléctrique(s) : " + selectedMarker.velo_electrique}
+            <br />
+            {"Identifiant de la station :" + selectedMarker.stationId}
+          </p>
+        </InfoWindow>
+      )}
+
+      {directions && <DirectionsRenderer directions={directions} />}
+    </GoogleMap>
+  </div>
+);
+}
