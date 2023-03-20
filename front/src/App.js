@@ -77,6 +77,7 @@ export default function App() {
   const [markersVisible, setMarkersVisible] = useState(false);
   const [emptyMarkersVisible, setEmptyMarkersVisible] = useState(false);
   const [autocomplete, setAutocomplete] = useState(null);
+  const [myLocation, setMyLocation] = useState(null);
   const [nearStations,setNearStations] = useState([]);
   const [directionsButton] = useState(true);
   const [directions, setDirections] = useState(null);
@@ -111,8 +112,16 @@ export default function App() {
   const handlePlaceSelect = async () => {
     const place = autocomplete.getPlace();
     if (place.geometry) {
-      center.lat = place.geometry.location.lat();
-      center.lng = place.geometry.location.lng();
+      const lat = place.geometry.location.lat();
+      const lng = place.geometry.location.lng();
+
+      setMyLocation({
+        lat,
+        lng
+      });
+
+      center.lat = lat;
+      center.lng = lng;
 
       try {
         await axios.post("http://localhost:3030/location", {
@@ -160,7 +169,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "clè API Goooooooooooooooooooooooogle",
+    googleMapsApiKey: "AIzaSyB4oV5G1N1vu2kwbm0FB001y_rGEffI0gQ",
     libraries: ["places"],
   });
 
@@ -225,12 +234,13 @@ export default function App() {
               : "Montrer Les Stations Vides"}
           </button>
           {nearStations.length > 0 && (
-          <><br></br><button
+          <>
+            <br/>
+            <button
               style={controlStyle}
               onClick={calculateDirections}
-              visible={directionsButton}>
-              {"Station la plus proche"}
-            </button></>
+            >Station la plus proche</button>
+          </>
   )}
         </div>
         {data.map((element) => {
@@ -289,7 +299,7 @@ export default function App() {
           </InfoWindow>
         )}
   
-        {directions && <DirectionsRenderer directions={directions} />}
+  {directions && <DirectionsRenderer directions={directions} options={{ suppressMarkers: true }} panel={directionsButton ? document.getElementById("directions-panel") : null} />}
       </GoogleMap>
     </div>
   )};
