@@ -169,7 +169,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyB4oV5G1N1vu2kwbm0FB001y_rGEffI0gQ",
+    googleMapsApiKey: "Clef API google",
     libraries: ["places"],
   });
 
