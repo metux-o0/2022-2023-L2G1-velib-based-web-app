@@ -66,15 +66,17 @@ app.get("/proches/:lat/:long",async (req,res) => {
         for(let i =0;i<((listeStationss.data).data.stations).length;i++){
             if(element.station_id === (((listeCoordd.data).data).stations)[i].station_id){
                 
-                listeFinale.push({
-                    stationId : element.station_id,
-                    nom : (((listeCoordd.data).data).stations)[i].name,
-                    veloDisponible : element.num_bikes_available,
-                    velo_Mecanique: element.num_bikes_available_types[0].mechanical,
-                    velo_electrique: element.num_bikes_available_types[1].ebike,
-                    latitude : (((listeCoordd.data).data).stations)[i].lat,
-                    longitude : (((listeCoordd.data).data).stations)[i].lon
-                });
+                if (element.num_bikes_available > 0) {
+                    listeFinale.push({
+                        stationId : element.station_id,
+                        nom : (((listeCoordd.data).data).stations)[i].name,
+                        veloDisponible : element.num_bikes_available,
+                        velo_Mecanique: element.num_bikes_available_types[0].mechanical,
+                        velo_electrique: element.num_bikes_available_types[1].ebike,
+                        latitude : (((listeCoordd.data).data).stations)[i].lat,
+                        longitude : (((listeCoordd.data).data).stations)[i].lon
+                    });
+                }
             }
         }
     }))
