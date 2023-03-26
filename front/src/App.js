@@ -275,7 +275,11 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
+<<<<<<< HEAD
     googleMapsApiKey: "Gooooooooooooooooooooooooooooooooooogle maps key",
+=======
+    googleMapsApiKey: "Clef API google",
+>>>>>>> b8ad3e61c27836455e3d7c18c99d0acdb27ec062
     libraries: ["places"],
   });
 
