@@ -248,7 +248,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "Clef API google",
+    googleMapsApiKey: "Clef API Google",
     libraries: ["places"],
   });
 

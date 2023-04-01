@@ -8,11 +8,52 @@ const  User = require("./src/models/user");
 const crypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authentification = require("./src/middlewares/authentification");
+const Stations = require("./src/models/stations");
 
 app.use(express.json());
 
-app.listen(3030, ()=>{
-    console.log("server Back is on port 3030")
+app.listen(3030,async()=>{
+    if(await Stations.count({}) == 0){
+        let listeFinal = new Array();
+        let listeStations = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_status.json",axiosOptions);
+        let listeCoord = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_information.json",axiosOptions);
+        
+        ((((listeStations.data).data).stations).map(async (element) => {
+            for(let i =0;i<((listeStations.data).data.stations).length;i++){
+                if(element.station_id === (((listeCoord.data).data).stations)[i].station_id){
+                    let stations = new Stations({
+                        stationId : element.station_id,
+                        nom : (((listeCoord.data).data).stations)[i].name,
+                        veloDisponible : element.num_bikes_available,
+                        velo_Mecanique: element.num_bikes_available_types[0].mechanical,
+                        velo_electrique: element.num_bikes_available_types[1].ebike,
+                        latitude : (((listeCoord.data).data).stations)[i].lat,
+                        longitude : (((listeCoord.data).data).stations)[i].lon,
+                        stationCode : element.stationCode
+                    });
+                    stations._id = element.station_id;
+                    await stations.save();
+                } 
+            }
+        }))
+        await Stations.find({});
+    }else{
+        let listeStations = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_status.json",axiosOptions);
+        for(let i = 0;i<listeStations.data.data.stations.length;i++){ 
+            let stations = await Stations.findByIdAndUpdate(listeStations.data.data.stations[i].station_id,{
+                "veloDisponible":listeStations.data.data.stations[i].num_bikes_available,
+                "velo_Mecanique": listeStations.data.data.stations[i].num_bikes_available_types[0].mechanical,
+                "velo_electrique": listeStations.data.data.stations[i].num_bikes_available_types[1].ebike
+            },{
+                new:true
+            });
+
+        }
+        console.log("ivi");
+        
+    }
+    console.log(await Stations.count({}));
+    console.log("Tout est bon");
 });
 
 Connectdb();
@@ -42,53 +83,22 @@ app.get("/",(req,res) => {
 })
 
 app.get("/liste",async (req,res) => {
-    let listeFinal = new Array();
-    let listeStations = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_status.json",axiosOptions);
-    let listeCoord = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_information.json",axiosOptions);
-
-    ((((listeStations.data).data).stations).map(element => {
-        for(let i =0;i<((listeStations.data).data.stations).length;i++){
-            if(element.station_id === (((listeCoord.data).data).stations)[i].station_id){
-  
-                listeFinal.push({
-                    stationId : element.station_id,
-                    nom : (((listeCoord.data).data).stations)[i].name,
-                    veloDisponible : element.num_bikes_available,
-                    velo_Mecanique: element.num_bikes_available_types[0].mechanical,
-                    velo_electrique: element.num_bikes_available_types[1].ebike,
-                    latitude : (((listeCoord.data).data).stations)[i].lat,
-                    longitude : (((listeCoord.data).data).stations)[i].lon
-                });
-            }
-        }
-    }))
-    res.send(listeFinal);
+    const stations = await Stations.find({}); 
+    res.send(stations);
     
 })
 
+app.get("/liste/elec", async(req,res) => {
+    const stations = await Stations.find({
+        velo_electrique : {$gte:1}
+    });
+    res.send(stations);
+});
+
+
+
 app.get("/proches/:lat/:long",async (req,res) => {
-    let listeFinale = new Array();
-    let listeStationss = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_status.json",axiosOptions);
-    let listeCoordd = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_information.json",axiosOptions);
-    
-    ((((listeStationss.data).data).stations).map(element => {
-        for(let i =0;i<((listeStationss.data).data.stations).length;i++){
-            if(element.station_id === (((listeCoordd.data).data).stations)[i].station_id){
-                
-                if (element.num_bikes_available > 0) {
-                    listeFinale.push({
-                        stationId : element.station_id,
-                        nom : (((listeCoordd.data).data).stations)[i].name,
-                        veloDisponible : element.num_bikes_available,
-                        velo_Mecanique: element.num_bikes_available_types[0].mechanical,
-                        velo_electrique: element.num_bikes_available_types[1].ebike,
-                        latitude : (((listeCoordd.data).data).stations)[i].lat,
-                        longitude : (((listeCoordd.data).data).stations)[i].lon
-                    });
-                }
-            }
-        }
-    }))
+    let listeFinale = await Stations.find({});
     
     listeFinale.sort((a,b) => {
         let PosUser = {
@@ -126,12 +136,12 @@ app.post("/users/login",async (req,res,next) => {
         var token = jwt.sign({_id : user._id},"foo");
         user.AuthTokens = token;
         await user.save();
-        res.send({user,token});
+        res.send({user:{prenom:user.prenom,nom:user.nom,id:user._id},token});
     }else{
         res.send("Mauvais mdp");
     }    
 });}catch(e){
-    res.send("Erreur");
+    res.send("Mauvaise e-mail");
 }
 });
 
@@ -197,5 +207,4 @@ try{
     }catch(e){
         res.send(e);
     }
-
 });
