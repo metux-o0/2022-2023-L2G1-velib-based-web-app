@@ -1,0 +1,134 @@
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: auto;
+    padding-top: 20px;
+}
+
+main .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    position: relative;
+}
+
+/* TWO BUTTONS LINK */
+.home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-accueil,
+.btn-tester {
+    padding: 10px 20px;
+    font-size: 1.2em;
+    background-color: #393E46;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-accueil:hover,
+.btn-tester:hover {
+    background-color: #718096;
+    color: #393E46;
+    transform: scale(1.05);
+}
+
+/* PRESENTATION */
+.description {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 25px 0;
+    width: 80%;
+}
+
+.description h2 {
+    background-color: #393E46;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    border: 2px solid #ffffff;
+    text-align: center;
+    width: 100%;
+}
+.description p{
+    text-align: justify;
+}
+/* IMAGE */
+.my-image-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 25px 0;
+    border: 2px solid black;
+    max-width: 50%;
+    border-radius: 8px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease-in-out;
+    user-select: none;
+}
+
+.my-image {
+    width: 100%;
+    border-radius: 8px;
+}
+
+.my-image-container:hover {
+    transform: scale(1.05);
+}
+
+h3.tester {
+    margin-top: -20px;
+    font-size: 1.2em;
+}
+
+/* FORM  */
+
+form {
+    border: 2px solid #fbfbfc;
+    color: #fbfbfc;
+    background: #393E46;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.5);
+    width: 80%;
+    max-width: 500px;
+    transition: transform 0.2s ease-in-out;
+}
+
+form input,
+form textarea {
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+form button[type="submit"]{
+    background-color: #6DD5B3;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+form button[type="submit"]:active{
+    transform: scale(0.90);
+}

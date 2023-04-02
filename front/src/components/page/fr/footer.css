@@ -1,0 +1,22 @@
+footer{
+    height: 10vh;
+    background-color: #393E46;
+    width: 100%;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+footer .content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 90%;
+    max-width: 1200px;
+}
+footer .content p{
+    color: white;
+    font-size: 0.8em;
+    text-align: center;
+}

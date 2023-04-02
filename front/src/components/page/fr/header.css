@@ -1,0 +1,90 @@
+header {
+    background-color: #393E46;
+    color: white;
+    padding: 10px;
+    height: 15vh;
+}
+
+header .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%; /* Modification */
+    max-width: 1200px;
+    margin: 0 auto; /* Modification */
+    position: relative;
+}
+
+/* LOGO */
+header .content .logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
+}
+
+header .content .logo:hover {
+    transform: scale(1.05);
+}
+
+
+header .content .logo img {
+    height: 80px;
+    width: 80px;
+    margin-right: 10px;
+    animation: rotate 20s linear infinite; 
+}
+
+
+/* DEV INFO */
+header .content .dev-info {
+    margin-top: 10px;
+    font-size: 0.8em;
+    text-align: center;
+}
+
+/* BUTTONS LANGUAGES */
+header .content .buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: auto;
+    width: auto;
+}
+
+header .content .language-btn {
+    background-color: #6DD5B3;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+}
+
+header .content .language-btn:hover {
+    background-color: #718096;
+}
+
+/* LOGO VELIB METROPOLE */
+header .content .velib-metropole {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+}
+
+header .content .velib-metropole .velib-logo {
+    width: 80px;
+    height: auto;
+    max-height: 50px;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
