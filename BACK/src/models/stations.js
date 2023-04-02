@@ -39,6 +39,14 @@ const Stations = mongoose.model("stations",{
     stationCode:{
         type:String,
         
+    },
+
+    capacite:{
+        type:Number
+    },
+
+    PlaceDisponible:{
+        type:Number
     }
 
 });
