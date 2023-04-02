@@ -475,7 +475,7 @@ export default function App() {
             <p>
               {"Nom : " + selectedMarker.nom}
               <br />
-              {"Code de la station :" + selectedMarker.CodeStation}
+              {"Code de la station :" + selectedMarker.stationCode}
               <br />
               {"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}
               <br />
