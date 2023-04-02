@@ -266,7 +266,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyAapKJxDNLZLnHQLX_erzrDm0oFq0RLKfE",
+    googleMapsApiKey: "Clef Api GooGle",
     libraries: libraries,
   });
 
@@ -475,7 +475,7 @@ export default function App() {
             <p>
               {"Nom : " + selectedMarker.nom}
               <br />
-              {"Code de la station :" + selectedMarker.CodeStation}
+              {"Code de la station :" + selectedMarker.stationCode}
               <br />
               {"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}
               <br />
