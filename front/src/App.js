@@ -266,7 +266,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "Clef Api GooGle",
+    googleMapsApiKey: "Gooooogle API KEY",
     libraries: libraries,
   });
 
@@ -358,7 +358,7 @@ export default function App() {
           </div>
 
 
-          {searchOption === "trouver" && ( // pour afficher les vélos proches d'une localisation il faut choisir "trouver" 
+          {( // pour afficher les vélos proches d'une localisation il faut choisir "trouver"
             <div>
               {nearStations.map((elementNearStation) => {
                 let pos = {
