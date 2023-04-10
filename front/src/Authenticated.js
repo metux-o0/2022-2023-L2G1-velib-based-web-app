@@ -31,6 +31,9 @@ function Authenticated() {
             try {
                 const response = await fetch(`http://localhost:3030/users/${userId}`, {
                     method: 'DELETE',
+                    headers: {
+                        "Authorization": "bearer " + localStorage.getItem("token"),
+                    },
                 });
                 if (response.ok) {
                     localStorage.removeItem('token');

@@ -150,7 +150,9 @@ export default function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios("http://localhost:3030/liste");
+      const result = await axios("http://localhost:3030/liste" ,{headers: {
+        "Authorization": "bearer " + localStorage.getItem("token"),
+    }});
       setData(result.data);
     };
     fetchData();
@@ -266,7 +268,7 @@ export default function App() {
   };
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "Gooooogle API KEY",
+    googleMapsApiKey: "API key",
     libraries: libraries,
   });
 
@@ -279,7 +281,7 @@ export default function App() {
   };
 
 
-
+ 
 
   //===========================================================================================================
   //===========================================================================================================

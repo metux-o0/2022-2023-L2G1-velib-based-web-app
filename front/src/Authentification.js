@@ -57,6 +57,8 @@ function Authentification() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    prenom,
+                    nom,
                     email,
                     password,
                 }),

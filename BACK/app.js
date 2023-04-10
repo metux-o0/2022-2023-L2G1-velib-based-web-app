@@ -89,7 +89,7 @@ app.get("/", (req, res) => {
 
 })
 
-app.get("/liste", async (req, res) => {
+app.get("/liste",async (req, res) => {
     const stations = await Stations.find({});
     res.send(stations);
 
@@ -102,10 +102,44 @@ app.get("/liste/elec", async (req, res) => {
     res.send(stations);
 });
 
+app.get("/prochesElectrique/:lat/:long",async (req,res) => {
+    let listeFinale = await Stations.find({
+        velo_electrique: {$gte: 2}
+    });
+
+    listeFinale.sort((a, b) => {
+        let PosUser = {
+            latitude: req.params.lat,
+            longitude: req.params.long
+        }
+
+        return (geo.getDistance(PosUser, { latitude: a.latitude, longitude: a.longitude }) - geo.getDistance(PosUser, { latitude: b.latitude, longitude: b.longitude }))
+    })
+    res.send(listeFinale.slice(0, 10));
+});
+
+app.get("/prochesMechanique/:lat/:long",async (req,res) => {
+    let listeFinale = await Stations.find({
+        velo_Mecanique: {$gte: 2}
+    });
+
+    listeFinale.sort((a, b) => {
+        let PosUser = {
+            latitude: req.params.lat,
+            longitude: req.params.long
+        }
+
+        return (geo.getDistance(PosUser, { latitude: a.latitude, longitude: a.longitude }) - geo.getDistance(PosUser, { latitude: b.latitude, longitude: b.longitude }))
+    })
+    res.send(listeFinale.slice(0, 10));
+});
+
 
 
 app.get("/proches/:lat/:long", async (req, res) => {
-    let listeFinale = await Stations.find({});
+    let listeFinale = await Stations.find({
+        veloDisponible: {$gte: 2}
+    });
 
     listeFinale.sort((a, b) => {
         let PosUser = {
@@ -122,6 +156,23 @@ app.get("/proches/:lat/:long", async (req, res) => {
 app.get("/prochesStationsDeposer/:lat/:long", async (req, res) => {
     const listeFinale = await Stations.find({
         PlaceDisponible: { $gte: 3 }
+    });
+
+    listeFinale.sort((a, b) => {
+        let PosUser = {
+            latitude: req.params.lat,
+            longitude: req.params.long
+        }
+
+        return (geo.getDistance(PosUser, { latitude: a.latitude, longitude: a.longitude }) - geo.getDistance(PosUser, { latitude: b.latitude, longitude: b.longitude }))
+    })
+    res.send(listeFinale.slice(0, 10));
+
+});
+
+app.get("/prochesStationsDeposerBonusVide/:lat/:long", async (req, res) => {
+    const listeFinale = await Stations.find({
+        veloDisponible: { $lt: 1 }
     });
 
     listeFinale.sort((a, b) => {
@@ -225,7 +276,7 @@ app.patch("/users/:id", async (req, res, next) => {
     });
 });
 
-app.delete("/users/:id", async (req, res, next) => {
+app.delete("/users/:id",authentification ,async (req, res, next) => {
     try {
         const user = await User.findByIdAndDelete(req.params.id);
         if (!user) {
