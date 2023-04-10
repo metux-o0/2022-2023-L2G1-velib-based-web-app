@@ -2,6 +2,7 @@ import { GoogleMap, useLoadScript, Marker, InfoWindow, Autocomplete, MarkerF, Di
 import { useState, useEffect } from 'react';
 import axios from "axios";
 import Modal from "react-modal";
+import './components/page/Map/styleMap.css'
 
 Modal.setAppElement('#root');
 
@@ -10,18 +11,9 @@ const Taille = {
   height: "100vh",
 };
 
+const libraries = ["places", "geometry"];
 
-const libraries = ["places"];
 
-const controlStyle = {
-  backgroundColor: "#fff",
-  border: "2px solid #fff",
-  borderRadius: "3px",
-  boxShadow: "0 2px 6px rgba(0,0,0,.3)",
-  cursor: "pointer",
-  margin: "10px",
-  padding: "0 10px",
-};
 
 
 const image = {
@@ -76,6 +68,9 @@ const modalStyle = {
 
 
 
+
+
+
 export default function App() {
 
   //=================================================================================================================
@@ -103,9 +98,15 @@ export default function App() {
 
   const [screenErrorMessage, setScreenErrorMessage] = useState(false);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [searchOption, setSearchOption] = useState(null);
+  const [isModalOpenFindDeposit, setIsModalOpenFindDeposit] = useState(false);
+  const [searchOptionFindDeposit, setSearchOptionFindDeposit] = useState(null);
   const [isModalDisplayed, setIsModalDisplayed] = useState(false);
+
+  const [isModalOpenMechaElec, setIsModalOpenMechaElec] = useState(false);
+  const [searchOptionMechaElec, setSearchOptionMechaElec] = useState(null);
+
+  const [isModalOpenDepositEmpty, setIsModalOpenDepositEmpty,] = useState(false);
+  const [searchOptionDepositEmpty, setSearchOptionDepositEmpty] = useState(null);
 
 
 
@@ -151,7 +152,9 @@ export default function App() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios("http://localhost:3030/liste");
+      const result = await axios("http://localhost:3030/liste" ,{headers: {
+        "Authorization": "bearer " + localStorage.getItem("token"),
+    }});
       setData(result.data);
     };
     fetchData();
@@ -169,18 +172,32 @@ export default function App() {
         //setIsModalOpen(true);
       }
 
-      if (decidedLocation !== null && searchOption === "trouver") {
+      if (decidedLocation !== null && searchOptionFindDeposit === "trouver") {
         const result = await axios.get(`http://localhost:3030/proches/${decidedLocation.lat}/${decidedLocation.lng}`);
         setNearStations(result.data);
       }
-      if (decidedLocation !== null && searchOption === "deposer") {
+      if (decidedLocation !== null && searchOptionFindDeposit === "deposer") {
         const result = await axios.get(`http://localhost:3030/prochesStationsDeposer/${decidedLocation.lat}/${decidedLocation.lng}`);
+        setNearStations(result.data);
+      }
+      if (decidedLocation !== null && searchOptionFindDeposit === "trouver" && searchOptionMechaElec === "mechanique") {
+        const result = await axios.get(`http://localhost:3030/prochesMechanique/${decidedLocation.lat}/${decidedLocation.lng}`);
+        setNearStations(result.data);
+      }
+      if (decidedLocation !== null && searchOptionFindDeposit === "trouver" && searchOptionMechaElec === "electrique") {
+        const result = await axios.get(`http://localhost:3030/prochesElectrique/${decidedLocation.lat}/${decidedLocation.lng}`);
+        setNearStations(result.data);
+      }
+
+      if (decidedLocation !== null && searchOptionFindDeposit === "deposer" && searchOptionDepositEmpty === "vide") {
+        const result = await axios.get(`http://localhost:3030/prochesStationsDeposerBonusVide/${decidedLocation.lat}/${decidedLocation.lng}`);
         setNearStations(result.data);
       }
     };
 
     fetchData();
-  }, [enteredLocation, userLocation, searchOption]);
+  }, [enteredLocation, userLocation, searchOptionFindDeposit, searchOptionMechaElec, searchOptionDepositEmpty]);
+
 
 
   const toggleMarkers = () => {
@@ -208,8 +225,8 @@ export default function App() {
           lng
         });
         setCenter({ lat, lng }); // mettre à jour les coordonnées du state 'center' de la carte en fonction de l'adresse saisie
-        setSearchOption(null);
-        setIsModalOpen(true);
+        setSearchOptionFindDeposit(null);
+        setIsModalOpenFindDeposit(true);
 
         // Effectuer une requête HTTP POST vers le BACK pour enregistrer l'adresse saisie
       const userId = localStorage.getItem("userId");
@@ -230,7 +247,7 @@ export default function App() {
       && userLocation.coordonnees.lat !== "" && userLocation.coordonnees.lng !== "") {
       if (!isModalDisplayed) { // on rentre dans cette condition seulement si l'affichage de choix 'trouver'/'déposer' n'est jamais fait
         setIsModalDisplayed(true);// donc il a été affiché au moins une seule fois
-        setIsModalOpen(true);
+        setIsModalOpenFindDeposit(true);
       }
       return (userLocation.loaded && userLocation.coordonnees
         && userLocation.coordonnees.lat !== "" && userLocation.coordonnees.lng !== "");
@@ -241,23 +258,47 @@ export default function App() {
 
 
   function closeModal() {
-    setIsModalOpen(false);
+    setIsModalOpenFindDeposit(false);
+    setIsModalOpenMechaElec(false);
+    setIsModalOpenDepositEmpty(false);
   }
 
   function handleFind() {
-    setSearchOption("trouver");
-    setIsModalOpen(false);
+    setSearchOptionFindDeposit("trouver");
+    setIsModalOpenFindDeposit(false);
+    setIsModalOpenMechaElec(true);
   }
 
   function handleDeposit() {
-    setSearchOption("deposer");
-    setIsModalOpen(false);
+    setSearchOptionFindDeposit("deposer");
+    setIsModalOpenFindDeposit(false);
+    setIsModalOpenDepositEmpty(true);
+  }
+
+  function handleFindMechanic() {
+    setSearchOptionMechaElec("mechanique");
+    setIsModalOpenMechaElec(false);
+  }
+
+  function handleFindElectric() {
+    setSearchOptionMechaElec("electrique");
+    setIsModalOpenMechaElec(false);
+  }
+
+  function handleDepositEmpty() {
+    setSearchOptionDepositEmpty("vide");
+    setIsModalOpenDepositEmpty(false);
+  }
+
+  function GoBackFindDeposit() {
+    setIsModalOpenDepositEmpty(false);
+    setIsModalOpenMechaElec(false);
+    setIsModalOpenFindDeposit(true);
   }
 
 
 
   const calculateDirections = async (destination) => {
-
     const DirectionsService = new window.google.maps.DirectionsService();
 
     let origin;
@@ -309,10 +350,8 @@ export default function App() {
 
 
 
-
-
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "google api key",
+    googleMapsApiKey: "Google Map API Key",
     libraries: libraries,
   });
 
@@ -341,8 +380,6 @@ export default function App() {
     });
     return filteredData;
   };
-
-
 
 
   //===========================================================================================================
@@ -377,7 +414,7 @@ export default function App() {
           </Autocomplete>
 
           <Modal
-            isOpen={isModalOpen}
+            isOpen={isModalOpenFindDeposit}
             onRequestClose={closeModal}
             style={modalStyle}
           >
@@ -385,8 +422,40 @@ export default function App() {
             <br></br>
             <p>Cliquez sur Echap ou autour pour fermer le menu</p>
             <br></br>
-            <button onClick={handleFind}>Trouver un vélo</button>
-            <button onClick={handleDeposit}>Déposer un vélo</button>
+            <button className="btn-map" onClick={handleFind} style={{ backgroundColor: "#55a042" }}>Trouver un vélo</button>
+            <button className="btn-map" onClick={handleDeposit} style={{ backgroundColor: "#55a042" }}>Déposer un vélo</button>
+          </Modal>
+
+          <Modal
+            isOpen={isModalOpenMechaElec}
+            onRequestClose={closeModal}
+            style={modalStyle}
+          >
+            <h2>Quel(s) type(s) de vélo cherchez-vous ?</h2>
+            <br></br>
+            <p>Cliquez sur Echap ou autour pour fermer le menu</p>
+            <p>Si vous fermez ce menu, cela affichera automatiquement les stations vélos les plus proches avec les 2 types de vélo</p>
+            <br></br>
+            <button className="btn-map" onClick={handleFindMechanic} style={{ backgroundColor: "#88cd36" }}> Vélo(s) méchanique(s)</button>
+            <button className="btn-map" onClick={handleFindElectric} style={{ backgroundColor: "#67bfc3" }}> Vélo(s) électrique(s) </button>
+            <button className="btn-map" onClick={closeModal} style={{ backgroundColor: "#4FEC47" }}> Les 2 types </button>
+            <button className="btn-map" onClick={GoBackFindDeposit} style={{ backgroundColor: "#269CB7" }}> Retourner en arrière </button>
+          </Modal>
+
+          <Modal
+            isOpen={isModalOpenDepositEmpty}
+            onRequestClose={closeModal}
+            style={modalStyle}
+          >
+            <h2>Quelle est votre préférence pour déposer votre vélo ?</h2>
+            <br></br>
+            <p>Cliquez sur Echap ou autour pour fermer le menu</p>
+            <p style={{ color: 'red' }}>Sur certaines applications, lorsque vous déposez un vélo dans une station vide, vous gagnez des bonus.</p>
+            <p>Si vous fermez ce menu, cela affichera automatiquement les stations vélos avec au moins deux places disponibles !</p>
+            <br></br>
+            <button className="btn-map" onClick={handleDepositEmpty} style={{ backgroundColor: "#4FEC47" }}> BONUS : Station(s) vide(s) </button>
+            <button className="btn-map" onClick={closeModal} style={{ backgroundColor: "#4FEC47" }}> Pas de préférence </button>
+            <button className="btn-map" onClick={GoBackFindDeposit} style={{ backgroundColor: "#269CB7" }}> Retourner en arrière </button>
           </Modal>
 
 
@@ -402,24 +471,14 @@ export default function App() {
               />
             )}
             {userLocation.error && !screenErrorMessage && (
-              <div
-                style={{
-                  position: "fixed",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  backgroundColor: "#6AD3B1",
-                  padding: "20px",
-                  borderRadius: "5px",
-                  boxShadow: "0px 0px 10px rgba(0, 0, 0, 0.5)",
-                  fontFamily: "Verdana"
-                }}
-              >
+              <div className='sreenErrorGPS'>
                 <p>Erreur: {userLocation.error.message}</p>
                 <p>Vous avez refusé de partager vos info GPS, cliquez sur "OK" sachant que vous pouvez
                   utiliser la barre de recherche d'adresse afin d'obtenir use liste des staions
                 </p>
-                <button style={{ ...controlStyle, color: "navy" }} onClick={() => setScreenErrorMessage(true)}>OK</button>
+                <button className="btn-map" onClick={() => setScreenErrorMessage(true)}>
+                  OK
+                </button>
               </div>
             )}
           </div>
@@ -427,7 +486,7 @@ export default function App() {
 
 
 
-          {searchOption !== null && ( // pour afficher les vélos proches d'une localisation il faut choisir "trouver" 
+          {searchOptionFindDeposit !== null && ( // pour afficher les vélos proches d'une localisation il faut choisir une option
             <div>
               {nearStations.map((elementNearStation, index) => {
                 let pos = {
@@ -456,11 +515,11 @@ export default function App() {
         </div>
 
         <div style={{ position: "absolute", top: 10, left: 1 }}>
-          <button style={controlStyle} onClick={toggleMarkers}>
+          <button className="btn-map" onClick={toggleMarkers}>
             {markersVisible ? "Cacher Les Stations" : "Montrer Les Stations"}
           </button>
           <br></br>
-          <button style={controlStyle} onClick={toggleEmptyMarkers}>
+          <button className="btn-map" onClick={toggleEmptyMarkers}>
             {emptyMarkersVisible
               ? "Cacher Les Stations Vides"
               : "Montrer Les Stations Vides"}
@@ -472,28 +531,37 @@ export default function App() {
         </div>
         {nearStations.length > 0 && searchOption !== null && (
           <div style={{ position: "absolute", top: 10, left: 210 }}>
-            <button style={controlStyle} onClick={toggleNearStations}>
+            <button style={controlStyle} onClick={toggleNearStations}></button>
+          {directions && (
+            <button className="btn-map" onClick={() => {
+              setDirections(null);
+            }}>
+              {"Supprimer le chemin tracé"}
+            </button>
+          )}
+          <br></br>
+          {nearStations.length > 0 && searchOptionFindDeposit !== null && (
+            <button className="btn-map" onClick={toggleNearStations}>
               {nearStationsVisible
                 ? "Cacher les stations proches"
                 : "Stations les plus proches"}
             </button>
+          )}
 
 
-            {nearStationsVisible && (
-              <ul style={{ backgroundColor: "rgb(0, 224, 185)" }}>
-                {nearStations.map((station, index) => (
-                  <li
-                    key={index}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => calculateDirections(station)}
-                  >
-                    {station.nom} : {station.veloDisponible} vélo(s) disponible(s)
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        )}
+          {nearStationsVisible && (
+            <ul className="station-list">
+              {nearStations.map((station, index) => (
+                <li key={index} onClick={() => calculateDirections(station)}>
+                  <div className="bike-icon"></div>
+                  <div className="station-name">{station.nom}</div>
+                  <div className="available-bikes">{station.veloDisponible} vélo(s) disponible(s)</div>
+                </li>
+              ))}
+            </ul>
+
+          )}
+        </div>)
 
 
         {getFilteredData(data, nearStations).map((element, index) => {
@@ -507,21 +575,37 @@ export default function App() {
             icon = emptyImage;
           }
 
-          return (
-            <Marker
-              key={index}
-              position={pos}
-              onClick={() => {
-                showStationInfo(element);
+          if (markersVisible && element.veloDisponible !== 0) {
+            return (
+              <Marker
+                key={index}
+                position={pos}
+                onClick={() => {
+                  showStationInfo(element);
 
-              }}
-              visible={
-                markersVisible &&
-                (element.veloDisponible > 0 || emptyMarkersVisible)
-              }
-              icon={icon}
-            />
-          );
+                }}
+                visible={true}
+                icon={icon}
+              />
+            );
+          }
+
+          if (emptyMarkersVisible && element.veloDisponible === 0) {
+            return (
+              <Marker
+                key={index}
+                position={pos}
+                onClick={() => {
+                  showStationInfo(element);
+
+                }}
+                visible={true}
+                icon={icon}
+              />
+            );
+          }
+          return null;
+
         })}
 
         {enteredLocation && (
@@ -532,34 +616,36 @@ export default function App() {
 
         {selectedMarker && (
           <InfoWindow
-
             position={{
               lat: selectedMarker.latitude,
               lng: selectedMarker.longitude,
             }}
-
             onCloseClick={() => setSelectedMarker(null)}
-          // Réinitialiser le state selectedMarker lorsque l'info-bulle est fermée car sinon la première station 
-          // sur laquelle on a cliqué dessus reste toujours dans selectedMarker
-
-
           >
-            <p>
-              {"Nom : " + selectedMarker.nom}
-              <br />
-              {"Code de la station :" + selectedMarker.stationCode}
-              <br />
-              {"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}
-              <br />
-              {"vélo(s) mécanique(s) : " + selectedMarker.velo_Mecanique}
-              <br />
-              {"vélo(s) éléctrique(s) : " + selectedMarker.velo_electrique}
-              <br />
-              {"Capacité :" + selectedMarker.capacite}
-
-            </p>
+            <div className="info-window">
+              <h4>{"Nom : " + selectedMarker.nom}</h4>
+              <p>{"Code de la station : " + selectedMarker.stationCode}</p>
+              <p>{"Velo(s) disponible(s) : " + selectedMarker.veloDisponible}</p>
+              <p>{"Vélo(s) mécanique(s) : " + selectedMarker.velo_Mecanique}</p>
+              <p>{"Vélo(s) éléctrique(s) : " + selectedMarker.velo_electrique}</p>
+              <p>{"Capacité :" + selectedMarker.capacite}</p>
+            </div>
           </InfoWindow>
+
         )}
+
+        {selectedMarker && (
+          <div className='info-box'>
+            <div>
+              <h4>{selectedMarker.nom}</h4>
+              <p>Code de la station : {selectedMarker.stationCode}</p>
+              <p>Vélos électriques : {selectedMarker.velo_electrique}</p>
+              <p>Vélos mécaniques : {selectedMarker.velo_Mecanique}</p>
+              <p>Capacité : {selectedMarker.capacite} vélo(s)</p>
+            </div>
+          </div>
+        )}
+
 
         {directions && (
           <>
@@ -575,29 +661,11 @@ export default function App() {
               panel={directionsButton ? document.getElementById("directions-panel") : null} //Amine ???
             />
             {routeInfo && (
-              <div
-                style={{
-                  position: "absolute",
-                  top: "10px",
-                  right: "10px",
-                  backgroundColor: "rgb(0, 183, 104)",
-                  padding: "10px",
-                  boxShadow: "0 2px 6px rgba(0,0,0,.3)",
-                  borderRadius: "10px",
-                  zIndex: "1000",
-                  fontFamily: "Verdana"
-                }}
-              >
+              <div className="route-info-box">
+                <h4>Informations trajet :</h4>
                 <p>Distance : {routeInfo.distance}</p>
                 <p>Temps de trajet : {routeInfo.duration}</p>
-                <p style={{
-                  fontSize: "0.6em",
-                  color: "navy",
-                  boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.1",
-
-                }}>
-                  Clic-double sur le pin pour plus d'info
-                </p>
+                <p>Clic-double sur le pin pour plus d'info</p>
               </div>
             )}
           </>
