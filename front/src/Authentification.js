@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Header from './components/page/fr/header';
+import Footer from './components/page/fr/footer';
+import { useEffect } from 'react';
 
 function Authentification() {
     // States, états, données
@@ -9,6 +12,7 @@ function Authentification() {
     const [prenom, setPrenom] = useState("");
     const [showCreateAccountForm, setShowCreateAccountForm] = useState(false);
     const [showCreateAccountSuccess, setShowCreateAccountSuccess] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     // Comportements, Fonctions
     const handleEmailChange = (event) => {
@@ -59,6 +63,8 @@ function Authentification() {
                 body: JSON.stringify({
                     email,
                     password,
+                    nom,
+                    prenom,
                 }),
             });
             if (response.ok) {
@@ -80,48 +86,57 @@ function Authentification() {
         } catch (error) {
             console.error(error);
             alert("Erreur lors de la communication avec le serveur, Merci de rafraîchir la page ou de réessayer ultérieurement");
-
         }
     };
 
     const handleLogin = async (event) => {
         event.preventDefault();
         try {
-          const response = await fetch("http://localhost:3030/users/login", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              email,
-              password,
-            }),
-          });
-          if (response.ok) {
-            const data = await response.json();
-            localStorage.setItem('userId', data.user.id);  //stocker des info cherchées depuis le BACK
-            localStorage.setItem("token", data.token);  //stocker des info cherchées depuis le BACK
-      
-            console.log(localStorage.getItem('userId')); // test
-            console.log(localStorage.getItem('token')); // test
-      
-            // Rajouter une latence de 2 secondes avant de rediriger vers la page d'authentification
-            window.location.href = "/authenticated";
-          } else {
-            const errorData = await response.json();
-            alert(errorData.message);
-          }
-        } catch (error) {
-          console.error(error);
-          alert("Erreur lors de la communication avec le serveur");
-        }
-      };
-      
+            const response = await fetch("http://localhost:3030/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email,
+                    password,
+                }),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('userId', data.user.id);  //stocker des info cherchées depuis le BACK
+                localStorage.setItem("token", data.token);  //stocker des info cherchées depuis le BACK
 
-    // RENDERING
-    return (
-        <div>
-            {showCreateAccountForm ? (
+                console.log(localStorage.getItem('userId')); // test
+                console.log(localStorage.getItem('token')); // test
+
+                // Rajouter une latence de 2 secondes avant de rediriger vers la page d'authentification
+                window.location.href = "/authenticated";
+            } else {
+                const errorData = await response.json();
+                alert(errorData.message);
+            }
+        } catch (error) {
+            console.error(error);
+            alert("Erreur lors de la communication avec le serveur");
+        }
+    };
+
+
+
+    useEffect(() => {
+        const pageRendingCondition = () => {
+            const authentificationToken = localStorage.getItem("token");
+            if (authentificationToken) setIsAuthenticated(true);
+            else setIsAuthenticated(false);
+        }
+        pageRendingCondition();
+
+    }, []);
+
+    const pageContent = () => {
+        return (
+            showCreateAccountForm ? (
                 <form onSubmit={handleCreateAccount}>
                     <label>
                         Nom:
@@ -217,7 +232,21 @@ function Authentification() {
                         </form>
                     )}
                 </div>
-            )}
+            )
+        )
+    }
+
+    // RENDERING
+    return (
+        <div>
+            <Header />
+
+            <main>
+                {isAuthenticated ? (<h1>Vous êtes connecté(e)</h1>) : pageContent()}
+            </main>
+
+
+            <Footer />
         </div>
     );
 }

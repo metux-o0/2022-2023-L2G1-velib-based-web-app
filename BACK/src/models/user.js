@@ -28,6 +28,11 @@ const User  = mongoose.model("User",{
 
     AuthTokens:{
         type:String
+    },
+
+    adresses: {
+        type: [String],
+        default: []
     }
 });
 

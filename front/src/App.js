@@ -25,7 +25,7 @@ const controlStyle = {
 
 
 const image = {
-  url: "./images/pin_station.png",
+  url: "./images/pin_station.svg",
   scaledSize: {
     width: 15,
     height: 15
@@ -33,7 +33,7 @@ const image = {
 };
 
 const emptyImage = {
-  url: "./images/pin_station_vide.png",
+  url: "./images/pin_station_vide.svg",
   scaledSize: {
     width: 15,
     height: 15
@@ -42,7 +42,7 @@ const emptyImage = {
 
 
 const myLocationImage = {
-  url: "./images/myPosition.png",
+  url: "./images/myPosition.svg",
   scaledSize: {
     width: 50,
     height: 50
@@ -105,13 +105,14 @@ export default function App() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchOption, setSearchOption] = useState(null);
+  const [isModalDisplayed, setIsModalDisplayed] = useState(false);
 
 
 
 
 
 
- //==================================================================================================================
+  //==================================================================================================================
   //=================================================================================================================
   //=================================================================================================================
   // Hook , Fonctions - Comportements -------------------------------------------------------------------------------
@@ -165,16 +166,21 @@ export default function App() {
         decidedLocation = enteredLocation;
       } else if (userLocation.loaded) { // si la géolocalisation est activée
         decidedLocation = userLocation.coordonnees;
+        //setIsModalOpen(true);
       }
 
-      if (decidedLocation !== null) {
+      if (decidedLocation !== null && searchOption === "trouver") {
         const result = await axios.get(`http://localhost:3030/proches/${decidedLocation.lat}/${decidedLocation.lng}`);
+        setNearStations(result.data);
+      }
+      if (decidedLocation !== null && searchOption === "deposer") {
+        const result = await axios.get(`http://localhost:3030/prochesStationsDeposer/${decidedLocation.lat}/${decidedLocation.lng}`);
         setNearStations(result.data);
       }
     };
 
     fetchData();
-  }, [enteredLocation, userLocation]);
+  }, [enteredLocation, userLocation, searchOption]);
 
 
   const toggleMarkers = () => {
@@ -193,6 +199,7 @@ export default function App() {
 
     if (autocomplete) { //pour vérifier que l'objet autocomplete existe avant d'appeler sa méthode getPlace()
       const place = autocomplete.getPlace();
+      const address = autocomplete.getPlace().formatted_address;
       if (place.geometry) {
         const lat = place.geometry.location.lat();
         const lng = place.geometry.location.lng();
@@ -201,9 +208,35 @@ export default function App() {
           lng
         });
         setCenter({ lat, lng }); // mettre à jour les coordonnées du state 'center' de la carte en fonction de l'adresse saisie
+        setSearchOption(null);
         setIsModalOpen(true);
+
+        // Effectuer une requête HTTP POST vers le BACK pour enregistrer l'adresse saisie
+      const userId = localStorage.getItem("userId");
+      const data = { userId, address };
+
+      try {
+        await axios.post("http://localhost:3030/users/addresses", data);
+        console.log("Adresse enregistrée avec succès !");
+      } catch (error) {
+        console.error(error);
+      }
       }
     }
+  };
+
+  const handleUserSearchOption = () => {
+    if (userLocation.loaded && userLocation.coordonnees
+      && userLocation.coordonnees.lat !== "" && userLocation.coordonnees.lng !== "") {
+      if (!isModalDisplayed) { // on rentre dans cette condition seulement si l'affichage de choix 'trouver'/'déposer' n'est jamais fait
+        setIsModalDisplayed(true);// donc il a été affiché au moins une seule fois
+        setIsModalOpen(true);
+      }
+      return (userLocation.loaded && userLocation.coordonnees
+        && userLocation.coordonnees.lat !== "" && userLocation.coordonnees.lng !== "");
+      //renvoie true car l'affichage de l'icone de l'utilisateur est sous condition d'avoir son GPS validé
+    }
+    return false;
   };
 
 
@@ -219,12 +252,12 @@ export default function App() {
   function handleDeposit() {
     setSearchOption("deposer");
     setIsModalOpen(false);
-    window.alert("En cours de construction...");
   }
 
 
 
-  const calculateDirections = async (destination) => { //Problème à gérer, lors de la première itinéraire calculer, la valeur de la vairbale "directions" est à null
+  const calculateDirections = async (destination) => {
+
     const DirectionsService = new window.google.maps.DirectionsService();
 
     let origin;
@@ -245,19 +278,19 @@ export default function App() {
       destination.longitude
     );
 
-    DirectionsService.route(
+    await DirectionsService.route(
       {
         origin: origin,
         destination: destinationLatLng,
         travelMode: window.google.maps.TravelMode.WALKING,
       },
       (result, status) => {
-        if (status === window.google.maps.DirectionsStatus.OK) {
+        if (status === window.google.maps.DirectionsStatus.OK && result) {
           setDirections(result);
           const distance = result.routes[0].legs[0].distance.text;
           const duration = result.routes[0].legs[0].duration.text;
+          console.log(directions);
           setRouteInfo({ distance, duration });
-          console.log(directions); // c'est ici que le problème se passe dans la console (lors du premier chemin calculé)
         } else {
           console.error(`error fetching directions ${result}`);
         }
@@ -265,8 +298,21 @@ export default function App() {
     );
   };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "Gooooogle API KEY",
+    googleMapsApiKey: "google api key",
     libraries: libraries,
   });
 
@@ -276,6 +322,24 @@ export default function App() {
 
   const showStationInfo = (station) => {
     setSelectedMarker(station);
+  };
+
+  const handleOnUserZoomMap = () => { // pour recentrer la carte sur la position de l'utilisateur
+    if (userLocation && userLocation.coordonnees) {
+      setCenter({
+        lat: userLocation.coordonnees.lat,
+        lng: userLocation.coordonnees.lng
+      });
+    }
+  };
+
+  const getFilteredData = (data, nearStations) => {
+    const filteredData = data.filter((station) => {
+      return !nearStations.some(
+        (nearStation) => nearStation.stationCode === station.stationCode
+      );
+    });
+    return filteredData;
   };
 
 
@@ -318,14 +382,17 @@ export default function App() {
             style={modalStyle}
           >
             <h2>Que voulez vous faire ?</h2>
+            <br></br>
+            <p>Cliquez sur Echap ou autour pour fermer le menu</p>
+            <br></br>
             <button onClick={handleFind}>Trouver un vélo</button>
             <button onClick={handleDeposit}>Déposer un vélo</button>
           </Modal>
 
 
           <div>
-            {/*gestion de rendering de userLocation (soit affichage avec succès soit non en cas d'erreur avec message)*/}
-            {userLocation.loaded && userLocation.coordonnees && userLocation.coordonnees.lat !== "" && userLocation.coordonnees.lng !== "" && (
+            {/*gestion de rendering de Location (soit affichage avec succès soit non en cas d'erreur avec message)*/}
+            {handleUserSearchOption() && (
               <MarkerF //Problème il fallait utiliser MarkerF et pas Marker
                 position={{
                   lat: userLocation.coordonnees.lat,
@@ -358,9 +425,11 @@ export default function App() {
           </div>
 
 
-          {( // pour afficher les vélos proches d'une localisation il faut choisir "trouver"
+
+
+          {searchOption !== null && ( // pour afficher les vélos proches d'une localisation il faut choisir "trouver" 
             <div>
-              {nearStations.map((elementNearStation) => {
+              {nearStations.map((elementNearStation, index) => {
                 let pos = {
                   lat: elementNearStation.latitude,
                   lng: elementNearStation.longitude,
@@ -368,7 +437,7 @@ export default function App() {
                 let myIcon = NearsBikes;
                 return (
                   <Marker
-                    key={elementNearStation.stationId}
+                    key={index}
                     position={pos}
                     icon={myIcon}
                     onClick={() => {
@@ -397,8 +466,11 @@ export default function App() {
               : "Montrer Les Stations Vides"}
           </button>
           <br></br>
+          {userLocation.coordonnees && (
+            <button style={controlStyle} onClick={handleOnUserZoomMap}>Recentrer sur ma position</button>
+          )}
         </div>
-        {nearStations.length > 0 && searchOption === "trouver" && (
+        {nearStations.length > 0 && searchOption !== null && (
           <div style={{ position: "absolute", top: 10, left: 210 }}>
             <button style={controlStyle} onClick={toggleNearStations}>
               {nearStationsVisible
@@ -424,7 +496,7 @@ export default function App() {
         )}
 
 
-        {data.map((element) => {
+        {getFilteredData(data, nearStations).map((element, index) => {
           let pos = {
             lat: element.latitude,
             lng: element.longitude,
@@ -437,7 +509,7 @@ export default function App() {
 
           return (
             <Marker
-              key={element.stationId}
+              key={index}
               position={pos}
               onClick={() => {
                 showStationInfo(element);

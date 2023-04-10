@@ -136,12 +136,23 @@ app.get("/prochesStationsDeposer/:lat/:long", async (req, res) => {
 
 });
 
+//========================================================================================
+//========================================================================================
+//========================================================================================
+//========================================================================================
+
+
 app.post("/users/register", async (req, res, next) => {
 
     crypt.hash(req.body.password, 8, async (err, hash) => {
         try {
             req.body.password = hash;
-            const user = new User(req.body);
+            const user = new User({
+                nom: req.body.nom,
+                prenom: req.body.prenom,
+                email: req.body.email,
+                password: req.body.password
+            });
             const saveUser = await user.save();
             res.send(saveUser);
         } catch (e) {
@@ -149,6 +160,22 @@ app.post("/users/register", async (req, res, next) => {
         }
     });
 
+});
+
+
+app.post("/users/addresses", async (req, res) => {
+    const { userId, address } = req.body;
+    try {
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $push: { adresses: address } },
+            { new: true }
+        );
+        res.send(user.adresses);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Erreur lors de l'ajout de l'adresse" });
+    }
 });
 
 
@@ -194,7 +221,11 @@ app.get("/users", async (req, res, next) => {
 });
 
 app.get("/users/me", authentification, async (req, res, next) => {
-    res.send(req.user);
+    try {
+        res.json(req.user);
+    } catch (e) {
+        res.status(401).json({ message: "Unauthorized" });
+    }
 });
 
 app.get("/users/:id", async (req, res, next) => {
@@ -231,7 +262,7 @@ app.delete("/users/:id", async (req, res, next) => {
         if (!user) {
             return res.status(404).send({ message: "Utilisateur introuvable" });
         }
-        res.send({ message: "L'utilisateur a été supprimé avec succès" });
+        res.send({ message: "Le compte a été supprimé avec succès" });
     } catch (error) {
         console.error(error);
         res.status(500).send({ message: "Erreur lors de la suppression de l'utilisateur" });

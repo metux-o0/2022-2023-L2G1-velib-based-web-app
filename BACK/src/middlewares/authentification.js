@@ -12,7 +12,10 @@ const authentification =  async(req,res,next) => {
         req.user = user;  
         next()
     }catch(e){
-        res.send("Veuillez vous identifier");
+        res.status(401).json({
+            error: "Unauthorized",
+            message: "Vous devez être connecté pour accéder à cette ressource",
+          });
     }
 }
 
