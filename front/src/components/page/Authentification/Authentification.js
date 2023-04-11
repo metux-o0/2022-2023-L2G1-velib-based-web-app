@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Header from './components/page/fr/header';
-import Footer from './components/page/fr/footer';
+import Header from './header';
+import Footer from '../fr/footer';
 import { useEffect } from 'react';
 
 function Authentification() {

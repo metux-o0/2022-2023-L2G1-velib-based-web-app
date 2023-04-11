@@ -20,3 +20,19 @@ footer .content p{
     font-size: 0.8em;
     text-align: center;
 }
+
+ footer .btn-auth {
+    background-color: #2b2e31;
+    color: white;
+    border: none;
+    padding: 8px 10px;
+    margin-left: 10px;
+    border-radius: 5px;
+    transition: all 0.2s ease-in-out;
+}
+
+footer .btn-auth:hover{
+    background-color: #718096;
+    color: #393E46;
+    transform: scale(1.05);
+}

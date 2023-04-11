@@ -49,7 +49,7 @@ export default function Main() {
             <div className='content'>
                 <div className='home'>
                     <button className='btn-accueil'>Accueil</button>
-                    <Link to='/app' className='btn-tester'>
+                    <Link to='/app' target="_blank" className='btn-tester'>
                         Tester CycloTrack
                     </Link>
                 </div>
@@ -75,7 +75,7 @@ export default function Main() {
                         possèdent des vélos électriques ou des vélos mécaniques. CycloTrack est facile à utiliser et permet aux utilisateurs de planifier
                         leur voyage en toute confiance et de s'assurer de la disponibilité du vélo souhaité lors de leur arrivée à la station.
                     </p>
-                    <Link to='/app' className='my-image-container'>
+                    <Link to='/app' target="_blank" className='my-image-container'>
                         <img src={imageAppWeb} alt='Application Web' className='my-image' />
                     </Link>
                     <h3 className='tester'>

@@ -7,19 +7,26 @@ import velib from '../../media/velib.png'
 export default function header() {
     return (
         <header>
-            <div className='content'>
-                <div className="logo">
-                    <img src={logo} alt="Logo CycloTrack"></img>
+            <div className="content">
+                <Link to="/" className="logo">
+                    <img src={logo} alt="Logo CycloTrack" />
                     <h1>CycloTrack</h1>
-                </div>
+                </Link>
+
                 <p className="dev-info">Développé par Codex Hive</p>
                 <div className="buttons">
-                    <Link to="/en" className="language-btn">EN</Link>
+                    <Link to="/authentification" className="login-btn">
+                        Connexion
+                    </Link>
                 </div>
-                <Link to="https://www.velib-metropole.fr/" target="_blank" className='velib-metropole'>
-                    <img src={velib} alt="Logo Velib" className="velib-logo"></img>
-                </Link>
+                <div className="velib-metropole">
+                    <a href="https://www.velib-metropole.fr/" target="_blank" rel="noopener noreferrer">
+                        <img src={velib} alt="Logo Velib" className="velib-logo" />
+                    </a>
+                </div>
             </div>
         </header>
+
+
     )
 }

@@ -253,7 +253,7 @@ app.post("/users/logout", authentification, async (req, res, next) => {
         const user = await User.findOne({ _id: req.user._id, AuthTokens: req.user.AuthTokens });
         user.AuthTokens = "";
         await user.save();
-        console.log(user);
+        //console.log(user);
         res.status(204).send(); // pour dire déconnexion réussie
     } catch (e) {
         res.status(500).json({ message: "Une erreur interne s'est produite sur le serveur." });
@@ -283,7 +283,7 @@ app.get("/users/:id", async (req, res, next) => {
     const idC = req.params.id;
     try {
         const user = await User.findById(idC);
-        console.log(user);
+        //console.log(user);
         res.send(user);
     } catch (e) {
         console.log("Erreur");
@@ -292,20 +292,23 @@ app.get("/users/:id", async (req, res, next) => {
 });
 
 app.patch("/users/:id", async (req, res, next) => {
-    const idC = req.params.id
-    crypt.hash(req.body.password, 8, async (err, hash) => {
-        try {
-            req.body.password = hash;
-            const user = await User.findByIdAndUpdate(idC, req.body, {
-                new: true
-            });
-            console.log(user);
-            res.send(user);
-        } catch (e) {
-            res.send(e);
-        }
+    const idC = req.params.id;
+    const { nom, prenom, password } = req.body;
+    crypt.hash(password, 8, async (err, hash) => {
+      try {
+        const updatedUser = await User.findByIdAndUpdate(idC, {
+          nom,
+          prenom,
+          password: hash,
+        }, {
+          new: true,
+        });
+        res.send(updatedUser);
+      } catch (e) {
+        res.status(500).send({ message: 'Erreur lors de la mise à jour de l\'utilisateur' });
+      }
     });
-});
+  });
 
 app.delete("/users/:id",authentification ,async (req, res, next) => {
     try {
@@ -320,6 +323,18 @@ app.delete("/users/:id",authentification ,async (req, res, next) => {
     }
 });
 
+app.patch('/users/:id/clearAddresses', async (req, res, next) => {
+    const idC = req.params.id;
+    const { adresses } = req.body;
+    try {
+      const updatedUser = await User.findByIdAndUpdate(idC, { adresses }, { new: true });
+      res.send(updatedUser);
+    } catch (error) {
+      res.status(500).send({ message: 'Erreur lors de la suppression des adresses' });
+    }
+  });
+
+
 /*
 1 app.post("/users/register", ...): pour enregistrer un nouvel utilisateur dans la base de données.
 2 app.post("/users/login", ...): pour permettre à un utilisateur existant de se connecter et générer un token d'authentification.
@@ -329,4 +344,5 @@ app.delete("/users/:id",authentification ,async (req, res, next) => {
 6 app.get("/users/:id", ...): pour récupérer les informations d'un utilisateur spécifiqu depuis son ID.
 7 app.patch("/users/:id", ...): pour mettre à jour les informations d'un utilisateur à partir de son ID.
 8 app.delete("/users/:id", ...): pour supprimer un utilisateur depuis son ID. 
+9 app.patch('/users/:id/clearAdresses...: pour effacer l'historique d'adresses
 */

@@ -1,0 +1,25 @@
+li img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+
+li {
+    max-width: 800px; /* ajuster la valeur en fonction de vos besoins */
+    border: 2px solid black;
+    padding: 20px;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(204, 196, 196, 0.2);
+    background-color: #4da386;
+  }
+  
+.GPSerreur-image{
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+    height: auto;
+    margin-top: 10px;
+}
+

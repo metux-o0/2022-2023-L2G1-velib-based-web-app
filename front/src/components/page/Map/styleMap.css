@@ -2,6 +2,26 @@
 .btn-map {
     background-color: #6DD5B3;
     color: white;
+    padding: 0.625em 1.25em; /* utilisation de la mesure relative "em" */
+    border: none;
+    border-radius: 5px;
+    font-size: 1em; /* utilisation de la mesure relative "em" */
+    font-weight: bold;
+    border: 2px solid rgb(35, 155, 27);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin-left: 0.825em; /* utilisation de la mesure relative "em" */
+    margin-top: 0.625em; /* utilisation de la mesure relative "em" */
+}
+
+
+.btn-map:last-child {
+    margin-right: 0;
+}
+
+.btn-focus-center {
+    background-color: #6DD5B3;
+    color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
@@ -12,11 +32,18 @@
     transition: all 0.2s ease-in-out;
     margin-right: 10px;
     margin-top: 10px;
+
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
 }
 
-.btn-map:last-child {
-    margin-right: 0;
+.btn-focus-center:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: #4bae8d;
 }
+
 
 .btn-map:hover {
     transform: scale(1.05);
@@ -167,11 +194,32 @@
     margin: 0;
     margin-bottom: 10px;
     text-align: center;
-} 
+}
 
 /* Style des informations */
 .info-window p {
     margin: 0;
     margin-bottom: 2px;
     text-align: left;
+}
+
+.autocomplete-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5em;
+  border: 2px solid #ccc;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.8);
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.autocomplete-input:focus {
+  outline: none;
+  border-color: #6DD5B3;
+  box-shadow: 0px 0px 5px rgba(22, 56, 44, 0.8);
+}
+
+.mainApp{
+    padding-top: 0px;
 }

@@ -2,7 +2,9 @@ header {
     background-color: #393E46;
     color: white;
     padding: 10px;
-    height: 15vh;
+    min-height: 100px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
 }
 
 header .content {
@@ -10,43 +12,55 @@ header .content {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 90%;
     height: 100%;
-    max-width: 1200px;
+    max-width: 90%; /* mise à jour de la largeur maximale */
+    margin: 0 auto;
     position: relative;
 }
+
+header .content h1{
+    color: white;
+}
+
 /* LOGO */
 header .content .logo {
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease-in-out;
+    flex-direction: column; /* mise à jour pour que le texte soit en dessous de l'image */
 }
 
+header .content .logo:hover {
+    transform: scale(1.05);
+}
 
 header .content .logo img {
     height: 80px;
     width: 80px;
+    max-height: 100%;
+    max-width: 100%;
     margin-right: 10px;
-    transition: all 0.2s ease-in-out;
+    animation: rotate 20s linear infinite; 
 }
-header .content .logo img:hover {
-    transform: scale(1.05);
-}
+
 /* DEV INFO */
 header .content .dev-info {
-    margin-top: 10px;
+    margin-bottom: 15px;
     font-size: 0.8em;
     text-align: center;
 }
+
 /* BUTTONS LANGUAGES */
-header .content .buttons{
+header .content .buttons {
     position: absolute;
     top: 10px;
     right: 10px;
     height: auto;
     width: auto;
 }
-header .content .language-btn {
+
+header .content .login-btn {
     background-color: #6DD5B3;
     color: white;
     border: none;
@@ -56,18 +70,28 @@ header .content .language-btn {
     transition: all 0.2s ease-in-out;
 }
 
-header .content .language-btn:hover {
+header .content .login-btn:hover {
     background-color: #718096;
 }
 
 /* LOGO VELIB METROPOLE */
 header .content .velib-metropole {
     position: absolute;
-    bottom: 0;
+    bottom: 10px; /* mise à jour de la position verticale */
     left: 10px;
 }
+
 header .content .velib-metropole .velib-logo {
-    width: 80px;
+    width: 8%;
     height: auto;
-    max-height: 50px;
-  }
+    max-height: 8%;
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
