@@ -561,7 +561,7 @@ export default function App() {
             </ul>
 
           )}
-        </div>)
+        </div>)}
 
 
         {getFilteredData(data, nearStations).map((element, index) => {
