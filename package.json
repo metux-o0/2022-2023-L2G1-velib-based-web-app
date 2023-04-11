@@ -1,0 +1,11 @@
+{
+    "scripts": {
+        "install": "npm install concurrently --save-dev && cd front && npm i && cd .. && cd BACK && npm i",
+        "front": "cd front && npm start",
+        "back": "node BACK/app",
+        "start": "concurrently \"npm run back\" \"npm run front\""
+    },
+    "devDependencies": {
+        "concurrently": "^8.0.1"
+    }
+}
