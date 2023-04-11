@@ -11,7 +11,7 @@ function Error401() {
       <form>
         <h1>Error 401: Unauthorized</h1>
         <p>Vous n'êtes pas autorisé à accéder à cette ressource. Veuillez vous connecter pour continuer.</p>
-        <button><Link to="/authentification">Log in</Link></button>
+        <Link to="/authentification"><button>Log in</button></Link>
       </form>
       </main>
       <Footer />

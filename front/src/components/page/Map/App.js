@@ -355,7 +355,7 @@ export default function App() {
 
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyDduXOZBLTfFKcRwF52_VsXFOhsfXceXEc",
+    googleMapsApiKey: "Google api key",
     libraries: libraries,
   });
 
