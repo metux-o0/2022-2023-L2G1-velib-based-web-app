@@ -1,47 +1,62 @@
-## Etape 1 - Installer Visual Studio Code.
+# Getting Started with Create React App
 
-## Etape 2 - Installer Git.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Etape 3 - Installer add-ons de Visual Studio Code :
-		a. Ouvrez Visual Studio Code.
-		b. Accédez au menu des add-ons et recherchez l'add-ons suivant : Javascript 6.
+## Available Scripts
 
-## Etape 4 - Cloner le projet :
-		a: creer un dossier sur le bureau "Application"
-		b: Ouvrir le terminal dans Visual Studio Code et acceder à ce dossier
-		c: Coller "git clone https://github.com/metux-o0/2022-2023-L2G1-velib-based-web-app.git"
+### `sudo apt install git`
 
-## Etape 5 - Installer Node.js 
+installs git
 
-## Etape 6 - Installer React.js :
-		a: Ouvrez une fenêtre de terminal et accédez au dossier de votre projet.
-		b: Tapez la commande suivante dans le terminal : "npm install --save react-dom".
+### `git clone https://github.com/metux-o0/2022-2023-L2G1-velib-based-web-app.git`
+
+clones the github repository
+
+### `sudo apt install nodejs`
+
+installs the last version of node on your computer
+
+In the project directory, you can run:
+
+### `npm install`
+
+installs [node_modules] (libraries needed to run program ).
+
+### `npm start`
+
+Runs both back and front at the same time.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+if it does not work use the next two scipts on diffrent terminals
+
+### `npm run back`
+
+Runs the back in the development mode.
+Open [http://localhost:3030](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+If you have trouble launching it please check [BACK/src/services/mongoose.js] (your mongodb id and <password>)
+
+### `npm run front`
+
+Runs the front in the development mode.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+If you have trouble launching it please check [front/src/App.js] line [358] (your <GoogleMapsApiKey>).
 
 
-## Etape 7 - Modifier le code dans "Back/src/services/MongoDBlink" :
-	
-		a: Remplacez "mongodb+srv://NomUser:mdp@test.ppkdbye.mongodb.net/?retryWrites=true&w=majority" par le code spécifique requis pour se connecter à votre base de données MongoDB.
 
-## Etape 8 - Modifier le code dans "front/src/components/page/Map" :
-		a: Creer un fichier apiKey.js.
-		b: coller ce code:
-	
-			Const NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="Google api key";
-			export default NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+##API Key
+Create a file named `apiKey.js` on [front/src/components/page/Map].
+paste this line of code :
+	Const NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="Google api key";
+	export default NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+replace `Google api key` with you google maps api key.
 
-		c: Remplacez "Google api key" par la clé d'API Google Maps spécifique à votre projet.
+modify[Back/src/services/MongoDBlink] and replace "mongodb+srv://NomUser:mdp@test.ppkdbye.mongodb.net/?retryWrites=true&w=majority" by the code and password given to you on your DataBase MongoDB
 
-## Etape 9 - Installer les dépendances du back-end :
-		a: Ouvrez une fenêtre de terminal et accédez au dossier "Back" de votre projet.
-		b: Tapez la commande suivante dans le terminal : "npm i".
-		c: Attendez que l'installation soit terminée.
-		d: Tapez la commande suivante dans le terminal : "node app".
-		e: Attendez que le back-end affiche "tout est bon" dans la console.
-
-## Etape 10 - Installer les dépendances du front-end :
-		a: Ouvrez une fenêtre de terminal et accédez au dossier "front" de votre projet.
-		b: Tapez la commande suivante dans le terminal : "npm i".
-		c: Attendez que l'installation soit terminée.
-		d: Tapez la commande suivante dans le terminal : "npm start".
-
-Le recettage est terminé. Vérifiez que l'application fonctionne correctement.
