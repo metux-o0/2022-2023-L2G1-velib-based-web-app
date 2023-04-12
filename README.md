@@ -51,7 +51,7 @@ If you have trouble launching it please check [front/src/App.js] line [358] (you
 
 
 
-## `API Key`
+## API Key
 Create a file named `apiKey.js` on [front/src/components/page/Map].
 paste this line of code :
 	Const NEXT_PUBLIC_GOOGLE_MAPS_API_KEY="Google api key";
