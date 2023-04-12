@@ -4,6 +4,10 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Available Scripts
 
+### `sudo apt install nodejs`
+
+installs the last version of node on your computer
+
 In the project directory, you can run:
 
 ### `npm install`
@@ -26,7 +30,7 @@ Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
-If you have trouble launching it please check [front/src/components/Map.js] line [220] (your <GoogleMapsApiKey>)
+If you have trouble launching it please check [front/src/App.js] line [358] (your <GoogleMapsApiKey>)
 
 ### `npm start`
 
