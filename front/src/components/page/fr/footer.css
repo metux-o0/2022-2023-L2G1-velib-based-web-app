@@ -1,4 +1,4 @@
-footer{
+footer {
     height: 10vh;
     background-color: #393E46;
     width: 100%;
@@ -6,8 +6,10 @@ footer{
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative; /* Ajout de la propriété position */
 }
-footer .content{
+
+footer .content {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -15,13 +17,14 @@ footer .content{
     width: 90%;
     max-width: 1200px;
 }
-footer .content p{
+
+footer .content p {
     color: white;
     font-size: 0.8em;
     text-align: center;
 }
 
- footer .btn-auth {
+footer .btn-auth {
     background-color: #2b2e31;
     color: white;
     border: none;
@@ -31,8 +34,19 @@ footer .content p{
     transition: all 0.2s ease-in-out;
 }
 
-footer .btn-auth:hover{
+footer .btn-auth:hover {
     background-color: #718096;
     color: #393E46;
     transform: scale(1.05);
+}
+
+footer .github-logo {
+    width: 100px;
+    height: 50px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+footer .github-logo:hover {
+    transform: scale(1.2);
 }

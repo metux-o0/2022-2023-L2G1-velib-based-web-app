@@ -28,6 +28,7 @@ export default function Main() {
                 </div>
                 <div className='description'>
                     <h2>La description</h2>
+                    <br></br>
                     <p>
                         CycloTrack est une application web développée par{' '}
                         <strong>CodeX Hive</strong> qui facilite la recherche de vélos en

@@ -192,7 +192,7 @@ function Authenticated() {
 
                 {isProfileEditing &&
                     (
-                        <form>
+                        <div>
                             <h1>Modification de profil</h1>
                             <p>Email : {user.email}</p>
                             <div>
@@ -205,11 +205,11 @@ function Authenticated() {
                             </div>
                             <div>
                                 <label htmlFor="password">Mot de passe :</label>
-                                <input type="password" id="password" name="password" value={(editedUser.password.length > 10 && editedUser.password.slice(0, 10) )|| ''} onChange={handleChange} />
+                                <input type="password" id="password" name="password" value={editedUser.password || ''} onChange={handleChange} />
                             </div>
                             <button className='btn-tester' onClick={handleSaveEdit}>Enregistrer</button>
                             <button className='btn-tester' onClick={handleCancelEdit}>Annuler</button>
-                        </form>
+                        </div>
                     )}
 
                 <br />

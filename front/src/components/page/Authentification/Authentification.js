@@ -196,13 +196,13 @@ function Authentification() {
             ) : (
                 <div>
                     {showCreateAccountSuccess ? (
-                        <div>
+                        <form>
                             <p>Compte créé avec succès !</p>
                             <button onClick={() => {
                                 setShowCreateAccountSuccess(false);
                                 setShowCreateAccountForm(false);
                             }}>OK</button>
-                        </div>
+                        </form>
                     ) : (
                         <form onSubmit={handleLogin}>
                             <label>

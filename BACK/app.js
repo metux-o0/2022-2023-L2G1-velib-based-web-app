@@ -118,7 +118,7 @@ app.get("/prochesElectrique/:lat/:long",async (req,res) => {
     res.send(listeFinale.slice(0, 10));
 });
 
-app.get("/prochesMechanique/:lat/:long",async (req,res) => {
+app.get("/prochesMecanique/:lat/:long",async (req,res) => {
     let listeFinale = await Stations.find({
         velo_Mecanique: {$gte: 2}
     });

@@ -4,6 +4,7 @@ import axios from "axios";
 import Modal from "react-modal";
 import './styleMap.css'
 import Header from './headerMap'
+import NEXT_PUBLIC_GOOGLE_MAPS_API_KEY from "./apiKey";
 
 Modal.setAppElement('#root');
 
@@ -181,8 +182,8 @@ export default function App() {
         const result = await axios.get(`http://localhost:3030/prochesStationsDeposer/${decidedLocation.lat}/${decidedLocation.lng}`);
         setNearStations(result.data);
       }
-      if (decidedLocation !== null && searchOptionFindDeposit === "trouver" && searchOptionMechaElec === "mechanique") {
-        const result = await axios.get(`http://localhost:3030/prochesMechanique/${decidedLocation.lat}/${decidedLocation.lng}`);
+      if (decidedLocation !== null && searchOptionFindDeposit === "trouver" && searchOptionMechaElec === "mecanique") {
+        const result = await axios.get(`http://localhost:3030/prochesMecanique/${decidedLocation.lat}/${decidedLocation.lng}`);
         setNearStations(result.data);
       }
       if (decidedLocation !== null && searchOptionFindDeposit === "trouver" && searchOptionMechaElec === "electrique") {
@@ -277,7 +278,7 @@ export default function App() {
   }
 
   function handleFindMechanic() {
-    setSearchOptionMechaElec("mechanique");
+    setSearchOptionMechaElec("mecanique");
     setIsModalOpenMechaElec(false);
   }
 
@@ -355,7 +356,7 @@ export default function App() {
 
 
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: "AIzaSyDduXOZBLTfFKcRwF52_VsXFOhsfXceXEc",
+    googleMapsApiKey: NEXT_PUBLIC_GOOGLE_MAPS_API_KEY,
     libraries: libraries,
   });
 
@@ -424,7 +425,7 @@ export default function App() {
             >
               <h2>Que voulez vous faire ?</h2>
               <br></br>
-              <p>Cliquez sur Echap ou autour pour fermer le menu</p>
+              <p>Cliquez sur Echap ou autour pour fermer le menu !</p>
               <br></br>
               <button className="btn-map" onClick={handleFind} style={{ backgroundColor: "#55a042" }}>Trouver un vélo</button>
               <button className="btn-map" onClick={handleDeposit} style={{ backgroundColor: "#55a042" }}>Déposer un vélo</button>
@@ -437,10 +438,10 @@ export default function App() {
             >
               <h2>Quel(s) type(s) de vélo cherchez-vous ?</h2>
               <br></br>
-              <p>Cliquez sur Echap ou autour pour fermer le menu</p>
-              <p>Si vous fermez ce menu, cela affichera automatiquement les stations vélos les plus proches avec les 2 types de vélo</p>
+              <p>Cliquez sur Echap ou autour pour fermer le menu !</p>
+              <p>Si vous fermez ce menu, cela affichera automatiquement les stations vélos les plus proches avec les 2 types de vélo.</p>
               <br></br>
-              <button className="btn-map" onClick={handleFindMechanic} style={{ backgroundColor: "#88cd36" }}> Vélo(s) méchanique(s)</button>
+              <button className="btn-map" onClick={handleFindMechanic} style={{ backgroundColor: "#88cd36" }}> Vélo(s) mécanique(s)</button>
               <button className="btn-map" onClick={handleFindElectric} style={{ backgroundColor: "#67bfc3" }}> Vélo(s) électrique(s) </button>
               <button className="btn-map" onClick={closeModal} style={{ backgroundColor: "#4FEC47" }}> Les 2 types </button>
               <button className="btn-map" onClick={GoBackFindDeposit} style={{ backgroundColor: "#269CB7" }}> Retourner en arrière </button>
@@ -453,7 +454,7 @@ export default function App() {
             >
               <h2>Quelle est votre préférence pour déposer votre vélo ?</h2>
               <br></br>
-              <p>Cliquez sur Echap ou autour pour fermer le menu</p>
+              <p>Cliquez sur Echap ou autour pour fermer le menu !</p>
               <p style={{ color: 'red' }}>Sur certaines applications, lorsque vous déposez un vélo dans une station vide, vous gagnez des bonus.</p>
               <p>Si vous fermez ce menu, cela affichera automatiquement les stations vélos avec au moins deux places disponibles !</p>
               <br></br>
