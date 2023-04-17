@@ -9,6 +9,7 @@ const crypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const authentification = require("./src/middlewares/authentification");
 const Stations = require("./src/models/stations");
+const schedule = require("node-schedule");
 
 app.use(express.json());
 
@@ -64,6 +65,28 @@ app.listen(3030, async () => {
 });
 
 Connectdb();
+
+
+schedule.scheduleJob("*/1 * * * *",async () => {
+    let listeStations = await axios.get("https://velib-metropole-opendata.smoove.pro/opendata/Velib_Metropole/station_status.json", axiosOptions);
+        for (let i = 0; i < listeStations.data.data.stations.length; i++) {
+            let stations = await Stations.findByIdAndUpdate(listeStations.data.data.stations[i].station_id, {
+                "veloDisponible": listeStations.data.data.stations[i].num_bikes_available,
+                "velo_Mecanique": listeStations.data.data.stations[i].num_bikes_available_types[0].mechanical,
+                "velo_electrique": listeStations.data.data.stations[i].num_bikes_available_types[1].ebike,
+                "PlaceDisponible": listeStations.data.data.stations[i].num_docks_available
+            }, {
+                new: true
+            });
+
+        }
+        console.log("mise a jour !");
+
+});
+
+
+
+
 
 const axiosOptions = {
     headers: {
