@@ -124,32 +124,33 @@ function Authenticated() {
     const handleClearHistory = async () => {
         const confirmClear = window.confirm('Êtes-vous sûr de vouloir effacer votre historique ?');
         if (confirmClear) {
-          try {
-            const response = await fetch(`http://localhost:3030/users/${user._id}/clearAddresses`, {
-              method: 'PATCH',
-              headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'bearer ' + localStorage.getItem('token'),
-              },
-              body: JSON.stringify({ adresses: [] }),
-            });
-            if (response.ok) {
-              setUser({ ...user, adresses: [] });
-              alert('Votre historique a été effacé avec succès.');
-            } else {
-              const errorData = await response.json();
-              alert(errorData.message);
+            try {
+                const response = await fetch(`http://localhost:3030/users/${user._id}/clearAddresses`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'bearer ' + localStorage.getItem('token'),
+                    },
+                    body: JSON.stringify({ adresses: [] }),
+                });
+                if (response.ok) {
+                    setUser({ ...user, adresses: [] });
+                    alert('Votre historique a été effacé avec succès.');
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.message);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Erreur lors de la communication avec le serveur');
             }
-          } catch (error) {
-            console.error(error);
-            alert('Erreur lors de la communication avec le serveur');
-          }
         }
-      };
-      
+    };
+
 
     const handleEditProfile = () => {
         setIsProfileEditing(true);
+        setEditedUser({ ...editedUser, password: "" }); // Réinitialiser le mot de passe
     };
 
     const handleCancelEdit = () => {
@@ -207,10 +208,14 @@ function Authenticated() {
                                 <label htmlFor="password">Mot de passe :</label>
                                 <input type="password" id="password" name="password" value={editedUser.password || ''} onChange={handleChange} />
                             </div>
-                            <button className='btn-tester' onClick={handleSaveEdit}>Enregistrer</button>
+                            {editedUser.password === "" && (
+                                <p style={{ color: 'red' }}>Vous devez saisir votre mot de passe pour enregistrer les nouvelles informations.</p>
+                            )}
+                            <button className='btn-tester' onClick={handleSaveEdit} disabled={editedUser.password.trim() === ''}>Enregistrer</button>
                             <button className='btn-tester' onClick={handleCancelEdit}>Annuler</button>
                         </div>
                     )}
+
 
                 <br />
                 <button className='btn-tester' onClick={handleDeleteAccount}>Supprimer mon compte</button>
