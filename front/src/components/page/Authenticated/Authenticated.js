@@ -209,7 +209,7 @@ function Authenticated() {
                                 <input type="password" id="password" name="password" value={editedUser.password || ''} onChange={handleChange} />
                             </div>
                             {editedUser.password === "" && (
-                                <p style={{ color: 'red' }}>Vous devez saisir votre mot de passe pour enregistrer les nouvelles informations.</p>
+                                <p style={{ color: 'red' }}>Vous devez confirmer ou modifier votre mot de passe pour enregistrer les nouvelles informations.</p>
                             )}
                             <button className='btn-tester' onClick={handleSaveEdit} disabled={editedUser.password.trim() === ''}>Enregistrer</button>
                             <button className='btn-tester' onClick={handleCancelEdit}>Annuler</button>
